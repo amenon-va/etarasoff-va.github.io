@@ -3,39 +3,43 @@
     <head>
     </head>
     <body>
-        <div id="text-dump-here"></div>
+        <pre id="text-dump-here"></pre>
         <script>
-            var txt = '';
+            var info = {};
 
-            txt += "<p>screen.width: " + screen.width + "</p>";
-            txt += "<p>screen.height: " + screen.height + "</p>";
+            if (screen) {
+                info['screen'] = {}
+                info['screen']['width'] = screen.width;
+                info['screen']['height'] = screen.height;
+                info['screen']['colorDepth'] = screen.colorDepth;
+            }
     
             var navKeys = ['appName', 'platform', 'cookieEnabled', 'appCodeName', 'appVersion', 'language', 'systemLanguage', 'userLanguage', 'oscpu', 'cpuClass', 'productSub', 'userAgent'];
             for (key in navigator) {
                 if ((navKeys.indexOf(key) > -1)) {
-                    txt += '<p>' + key + ': ' + navigator[key] + '</p>';
+                    info[key] = navigator[key];
                 }
             }
     
             if (navigator['plugins']) {
+                info['plugins'] = {};
                 for (var plugin in navigator['plugins']) {
-                    if ((navigator['plugins'][plugin]) && (typeof navigator['plugins'][plugin] == 'object')) {
-                        txt += "<p>plugin name: " + navigator['plugins'][plugin]['name'] + "</p>";
-                        txt += '<p>plugin version:' + navigator['plugins'][plugin]['version'] + "</p>";
+                    if ((navigator['plugins'][plugin]) && (typeof navigator['plugins'][plugin] == 'object')) {  
+                        info['plugins'][navigator['plugins'][plugin]['name']] = navigator['plugins'][plugin]['version'];
                     }
                 }
             }
     
             if (navigator['mimeTypes']) {
+                info['mimeTypes'] = {};
                 for (var mimeType in navigator['mimeTypes']) {
                     if ((navigator['mimeTypes'][mimeType]) && (typeof navigator['mimeTypes'][mimeType] == 'object')) {
-                        txt += "<p>mimeType description: " + navigator['mimeTypes'][mimeType]['description'] + "</p>";
-                        txt += '<p>mimeType type:' + navigator['mimeTypes'][mimeType]['type'] + "</p>";
+                        info['mimeTypes'][navigator['mimeTypes'][mimeType]['type']] = navigator['mimeTypes'][mimeType]['description'];
                     }
                 }
             }
     
-            document.getElementById("text-dump-here").innerHTML = txt;
+            document.getElementById("text-dump-here").innerHTML = JSON.stringify(info, function(k, v) { if (v === undefined) { return null; } return v; }, 4);
         </script>
     </body>
 </html>
